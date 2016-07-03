@@ -1,6 +1,6 @@
 package teste.EMF;
 
-import frmichetti.com.dry.factory.singleton.EMF;
+import br.com.frmichetti.dryutil.factory.singleton.EMF;
 
 public class LoadSingletonEMF {
 

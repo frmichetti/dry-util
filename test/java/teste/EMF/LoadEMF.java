@@ -1,6 +1,6 @@
 package teste.EMF;
 
-import frmichetti.com.dry.factory.EMF;
+import br.com.frmichetti.dryutil.factory.EMF;
 
 public class LoadEMF {
 

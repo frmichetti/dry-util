@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import frmichetti.com.dry.LoadProperties;
+import br.com.frmichetti.dryutil.LoadProperties;
 
 public class TesteLoadProperties {
 

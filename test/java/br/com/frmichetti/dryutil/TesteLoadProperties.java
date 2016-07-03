@@ -1,3 +1,4 @@
+package br.com.frmichetti.dryutil;
 /**
  *
  * @author Felipe Rodrigues Michetti

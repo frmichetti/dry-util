@@ -1,4 +1,4 @@
-package teste.EMF;
+package br.com.frmichetti.dryutil.teste.EMF;
 
 import br.com.frmichetti.dryutil.factory.EMF;
 

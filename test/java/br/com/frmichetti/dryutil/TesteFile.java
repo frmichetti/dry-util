@@ -1,10 +1,11 @@
-package br.com.frmichetti.dryutil;
 /**
  *
  * @author Felipe Rodrigues Michetti
  * @see http://portfolio-frmichetti.rhcloud.com
  * @see mailto:frmichetti@gmail.com
  * */
+package br.com.frmichetti.dryutil;
+
 
 import java.io.File;
 import java.io.IOException;

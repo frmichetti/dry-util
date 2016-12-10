@@ -1,8 +1,3 @@
-/**
- * @author Felipe Rodrigues Michetti
- * @see http://portfolio-frmichetti.rhcloud.com
- * @see mailto:frmichetti@gmail.com
- */
 package br.com.codecode.dryutil.exception;
 
 public class NotImplementedYetException extends Exception {
@@ -13,9 +8,7 @@ public class NotImplementedYetException extends Exception {
      * Creates a new instance of <code>NotImplementedYetException</code> without
      * detail message.
      */
-    public NotImplementedYetException() {
-	System.out.println("TODO [NOT IMPLEMENTED YET]");
-    }
+    public NotImplementedYetException(){}
 
     /**
      * Constructs an instance of <code>NotImplementedYetException</code> with

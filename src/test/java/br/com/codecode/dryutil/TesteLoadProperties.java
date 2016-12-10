@@ -6,13 +6,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.junit.Test;
+
 import br.com.codecode.dryutil.LoadProperties;
 
 public class TesteLoadProperties {
 
-    public static void main(String... args) throws Exception {
+    @Test
+    public void test() throws Exception {
 
-	File file = new File("./src/resources/META-INF");
+	File file = new File("./src/main/resources/META-INF");
 
 	System.out.println("File exists ? " + file.exists());
 
@@ -38,8 +41,8 @@ public class TesteLoadProperties {
 	Files.list(dir).filter((f) -> f.getFileName().toString().endsWith("properties")).forEach(System.out::println);
 
 	System.out.println();
-	Properties prop = LoadProperties.readProperties(new File(
-		"C:\\Users\\Felipe\\git\\frmichetti\\com\\dry-util\\src\\resources\\META-INF\\properties.properties"));
+	
+	Properties prop = LoadProperties.readProperties(new File("./src/main/resources/META-INF/properties.properties"));
 
 	System.out.println("Read Property Senha " + prop.getProperty("senha"));
 

@@ -1,6 +1,5 @@
 package br.com.codecode.dryutil.factory;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -93,8 +92,7 @@ public final class JDBC {
 
 	} catch (SQLException ex) {
 
-	    throw new ConnectionException(
-		    "Could not load Driver Manager, check the properties of the connection. : " + ex);
+	    throw new ConnectionException("Could not load Driver Manager, check the properties of the connection. : " , ex);
 	}
 
     }
@@ -112,8 +110,7 @@ public final class JDBC {
 
 	} catch (NamingException | SQLException ex) {
 
-	    throw new ConnectionException(
-		    "Could not load Driver Manager, check the properties of the connection. :" + ex);
+	    throw new ConnectionException("Could not load Driver Manager, check the properties of the connection. :", ex);
 
 	}
 
@@ -123,7 +120,7 @@ public final class JDBC {
 
 	try {
 
-	    properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
+	    properties = LoadProperties.readProperties(ClassLoader.class.getResourceAsStream("/META-INF/properties.properties"));
 
 	    dbHost = properties.getProperty("dbHost");
 

@@ -3,11 +3,14 @@ package br.com.codecode.dryutil;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.Test;
+
 public class TesteFile {
 
-    public static void main(String... args) {
+    @Test
+    public void test() {
 
-	File f = new File("./src/resources/META-INF");
+	File f = new File(".");
 
 	try {
 

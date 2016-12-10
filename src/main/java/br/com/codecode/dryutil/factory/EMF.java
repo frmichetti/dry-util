@@ -26,7 +26,7 @@ public final class EMF {
     public EMF() {
 	try {
 
-	    properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
+	    properties = LoadProperties.readProperties(ClassLoader.class.getResourceAsStream("/META-INF/properties.properties"));
 
 	    persistenceUnity = properties.getProperty("persistenceUnity");
 

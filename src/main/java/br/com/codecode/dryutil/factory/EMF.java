@@ -1,9 +1,8 @@
 /**
- *
  * @author Felipe Rodrigues Michetti
  * @see http://portfolio-frmichetti.rhcloud.com
  * @see mailto:frmichetti@gmail.com
- * */
+ */
 package br.com.codecode.dryutil.factory;
 
 import java.io.File;
@@ -16,57 +15,53 @@ import javax.persistence.Persistence;
 
 import br.com.codecode.dryutil.LoadProperties;
 
-public final class EMF {  
+public final class EMF {
 
-	private EntityManager entityManager;
+    private EntityManager entityManager;
 
-	private String persistenceUnity ;
-	
-	private Properties properties;
+    private String persistenceUnity;
 
+    private Properties properties;
 
-	public EMF() {
-		try {
-			
-			properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
-			
-			persistenceUnity = properties.getProperty("persistenceUnity");
-			
-			
-		} catch (IOException e) {
-			
-			throw new RuntimeException("File properties Not Found ", e);
-		}
-		
-		entityManager = getEntityManager();
+    public EMF() {
+	try {
+
+	    properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
+
+	    persistenceUnity = properties.getProperty("persistenceUnity");
+
+	} catch (IOException e) {
+
+	    throw new RuntimeException("File properties Not Found ", e);
 	}
 
-	
-	public EMF(File file){
-		try {
-			
-			properties = LoadProperties.readProperties(file);
-			
-			persistenceUnity = properties.getProperty("persistenceUnity");
-			
-		} catch (IOException e) {
-			
-			throw new IllegalArgumentException("File properties Not Found on Specified Path ", e);
-		}
-		
-		entityManager = getEntityManager();
+	entityManager = getEntityManager();
+    }
+
+    public EMF(File file) {
+	try {
+
+	    properties = LoadProperties.readProperties(file);
+
+	    persistenceUnity = properties.getProperty("persistenceUnity");
+
+	} catch (IOException e) {
+
+	    throw new IllegalArgumentException("File properties Not Found on Specified Path ", e);
 	}
-	
 
-	public EntityManager getEntityManager() {
+	entityManager = getEntityManager();
+    }
 
-		EntityManagerFactory factory = Persistence.createEntityManagerFactory(persistenceUnity);
+    public EntityManager getEntityManager() {
 
-		if (entityManager == null) {
+	EntityManagerFactory factory = Persistence.createEntityManagerFactory(persistenceUnity);
 
-			entityManager = factory.createEntityManager();
-		}
+	if (entityManager == null) {
 
-		return entityManager;
+	    entityManager = factory.createEntityManager();
 	}
+
+	return entityManager;
+    }
 }

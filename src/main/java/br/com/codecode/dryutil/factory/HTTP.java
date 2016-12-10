@@ -9,231 +9,188 @@ import java.net.URL;
 
 public final class HTTP {
 
-	private static final String USER_AGENT = "Mozilla/5.0";
+    private static final String ACCEPT_LANGUAGE = "UTF-8";
 
-	private static final String ACCEPT_LANGUAGE = "UTF-8";
-	
-	private HTTP(){
-		//STUB
+    private static final String USER_AGENT = "Mozilla/5.0";
+
+    private HTTP() {}
+
+    public static String doSend(URL url, String method, int timeout) throws RuntimeException {
+
+	if (url == null || method.equals("") || (timeout < 0)) {
+	    throw new IllegalArgumentException("Missing or Incorrect Parameters !!!");
 	}
 
+	HttpURLConnection con;
 
-	/**
-	 * // optional default is GET
-	 * Set the method for the URL request, one of: 
-	 * 
-	 *GET 
-	 *POST 
-	 *HEAD 
-	 *OPTIONS 
-	 *PUT 
-	 *DELETE 
-	 *TRACE
-	 *
-	 *@param url
-	 *@param method
-	 *@param timeout
-	 *
-	 *@exception RuntimeException, IllegalArgumentException
-	 */
-	public static String doSend(URL url, String method, int timeout) {
+	StringBuffer response;
 
-		if(url==null || method.equals("")|| (timeout < 0)){
-			throw new IllegalArgumentException("Missing or Incorrect Parameters !!!");
+	try {
+
+	    con = (HttpURLConnection) url.openConnection();
+
+	    con.setRequestMethod(method);
+
+	    con.setRequestProperty("User-Agent", USER_AGENT);
+
+	    con.setRequestProperty("Accept-Language", ACCEPT_LANGUAGE);
+
+	    con.setConnectTimeout(timeout);
+
+	    int responseCode = con.getResponseCode();
+
+	    System.out.println(
+		    "\nSending " + method + " request to URL : " + url + "Timeout is set up to " + timeout + " mili/s");
+
+	    System.out.println("Response Code : " + responseCode);
+
+	    try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+
+		String inputLine;
+
+		response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+
+		    response.append(inputLine);
 		}
+	    }
 
-		HttpURLConnection con;
+	} catch (IOException e) {
 
-		StringBuffer response;
-
-		try {
-
-			con = (HttpURLConnection) url.openConnection();
-
-			con.setRequestMethod(method);
-
-			con.setRequestProperty("User-Agent", USER_AGENT);
-
-			con.setRequestProperty("Accept-Language", ACCEPT_LANGUAGE);
-
-			con.setConnectTimeout(timeout);		
-
-			int responseCode = con.getResponseCode();
-
-			System.out.println("\nSending "+ method + " request to URL : " + url + "Timeout is set up to "+ timeout + " mili/s");
-
-			System.out.println("Response Code : " + responseCode);			
-
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-
-				String inputLine;
-
-				response = new StringBuffer();
-
-				while ((inputLine = in.readLine()) != null) {
-
-					response.append(inputLine);
-				}
-			}
-
-		} catch (IOException e) {
-
-			throw new RuntimeException("Could not create a connection ", e);
-		}
-
-		return response.toString();
+	    throw new RuntimeException("Could not create a connection ", e);
 	}
 
-	/**
-	 * // optional default is GET
-	 * Set the method for the URL request, one of: 
-	 * 
-	 *GET 
-	 *POST 
-	 *HEAD 
-	 *OPTIONS 
-	 *PUT 
-	 *DELETE 
-	 *TRACE
-	 *
-	 *@param url
-	 *@param method
-	 *@param timeout
-	 *@param parameter
-	 *
-	 *@exception RuntimeException, IllegalArgumentException
-	 */
-	public static String doSend(URL url, String parameter,String method, int timeout){
+	return response.toString();
+    }
 
-		if(url==null || parameter.equals("") || method.equals("")|| (timeout < 0)){
-			throw new IllegalArgumentException("Missing or Incorrect Parameters !!!");
-		}
+    public static String doSend(URL url, String parameter, String method, int timeout) throws RuntimeException {
 
-		HttpURLConnection con;
-
-		StringBuffer response = null;
-
-		try {
-
-			con = (HttpURLConnection) url.openConnection();
-
-			con.setRequestMethod(method);
-
-			con.setRequestProperty("User-Agent", USER_AGENT);
-
-			con.setRequestProperty("Accept-Language", ACCEPT_LANGUAGE);
-
-			con.setRequestProperty("Content-Type", "application/json");
-
-			con.setDoOutput(true);
-
-			try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-
-				wr.writeBytes(parameter);
-
-				wr.flush();
-			}
-
-			int responseCode = con.getResponseCode();
-
-			System.out.println("\nSending "+ method + " request to URL : " + url + "Timeout is set up to "+ timeout + " mili/s");
-
-			System.out.println("With parameter : " + parameter);
-
-			System.out.println("Response Code : " + responseCode);
-
-
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-
-				String inputLine;
-
-				response = new StringBuffer();
-
-				while ((inputLine = in.readLine()) != null) {
-
-					response.append(inputLine);
-				}
-			}
-		} catch (IOException e) {
-
-			throw new RuntimeException("Could not create a connection ", e);
-		}		
-
-		return response.toString();
-
+	if (url == null || parameter.equals("") || method.equals("") || (timeout < 0)) {
+	    throw new IllegalArgumentException("Missing or Incorrect Parameters !!!");
 	}
 
+	HttpURLConnection con;
 
-	@Deprecated
-	public static String sendGet(URL url) throws IOException {
+	StringBuffer response = null;
 
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+	try {
 
-		// optional default is GET
-		con.setRequestMethod("GET");
-		//add request header
-		con.setRequestProperty("User-Agent", USER_AGENT);
+	    con = (HttpURLConnection) url.openConnection();
 
-		con.setRequestProperty("Accept-Language", "UTF-8");        
+	    con.setRequestMethod(method);
 
+	    con.setRequestProperty("User-Agent", USER_AGENT);
 
-		int responseCode = con.getResponseCode();
+	    con.setRequestProperty("Accept-Language", ACCEPT_LANGUAGE);
 
-		System.out.println("\nSending 'GET' request to URL : " + url);
+	    con.setRequestProperty("Content-Type", "application/json");
 
-		System.out.println("Response Code : " + responseCode);
+	    con.setDoOutput(true);
 
+	    try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
 
-		StringBuffer response;
+		wr.writeBytes(parameter);
 
-		try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-			String inputLine;
-			response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
+		wr.flush();
+	    }
+
+	    int responseCode = con.getResponseCode();
+
+	    System.out.println(
+		    "\nSending " + method + " request to URL : " + url + "Timeout is set up to " + timeout + " mili/s");
+
+	    System.out.println("With parameter : " + parameter);
+
+	    System.out.println("Response Code : " + responseCode);
+
+	    try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+
+		String inputLine;
+
+		response = new StringBuffer();
+
+		while ((inputLine = in.readLine()) != null) {
+
+		    response.append(inputLine);
 		}
+	    }
+	} catch (IOException e) {
 
-		return response.toString();
-
+	    throw new RuntimeException("Could not create a connection ", e);
 	}
 
-	@Deprecated
-	public static String sendPost(URL url, String urlParameters) throws IOException {
+	return response.toString();
 
-		HttpURLConnection con = (HttpURLConnection) url.openConnection();
+    }
 
-		//add request header
-		con.setRequestMethod("POST");
-		con.setRequestProperty("User-Agent", USER_AGENT);
-		con.setRequestProperty("Accept-Language", "UTF-8");
-		con.setRequestProperty("Content-Type", "application/json");
+    @Deprecated
+    public static String sendGet(URL url) throws IOException {
 
-		// Send post request
-		con.setDoOutput(true);
+	HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
-		try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
-			wr.writeBytes(urlParameters);
-			wr.flush();
-		}
+	// optional default is GET
+	con.setRequestMethod("GET");
+	// add request header
+	con.setRequestProperty("User-Agent", USER_AGENT);
 
-		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'POST' request to URL : " + url);
-		System.out.println("Post parameters : " + urlParameters);
-		System.out.println("Response Code : " + responseCode);
+	con.setRequestProperty("Accept-Language", "UTF-8");
 
-		StringBuffer response;
-		try (BufferedReader in = new BufferedReader(
-				new InputStreamReader(con.getInputStream()))) {
-			String inputLine;
-			response = new StringBuffer();
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-		}
+	int responseCode = con.getResponseCode();
 
-		return response.toString();
+	System.out.println("\nSending 'GET' request to URL : " + url);
 
+	System.out.println("Response Code : " + responseCode);
+
+	StringBuffer response;
+
+	try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+	    String inputLine;
+	    response = new StringBuffer();
+	    while ((inputLine = in.readLine()) != null) {
+		response.append(inputLine);
+	    }
 	}
+
+	return response.toString();
+
+    }
+
+    @Deprecated
+    public static String sendPost(URL url, String urlParameters) throws IOException {
+
+	HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+	// add request header
+	con.setRequestMethod("POST");
+	con.setRequestProperty("User-Agent", USER_AGENT);
+	con.setRequestProperty("Accept-Language", "UTF-8");
+	con.setRequestProperty("Content-Type", "application/json");
+
+	// Send post request
+	con.setDoOutput(true);
+
+	try (DataOutputStream wr = new DataOutputStream(con.getOutputStream())) {
+	    wr.writeBytes(urlParameters);
+	    wr.flush();
+	}
+
+	int responseCode = con.getResponseCode();
+	System.out.println("\nSending 'POST' request to URL : " + url);
+	System.out.println("Post parameters : " + urlParameters);
+	System.out.println("Response Code : " + responseCode);
+
+	StringBuffer response;
+	try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+	    String inputLine;
+	    response = new StringBuffer();
+	    while ((inputLine = in.readLine()) != null) {
+		response.append(inputLine);
+	    }
+	}
+
+	return response.toString();
+
+    }
 
 }

@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class LoadProperties {
-	
-	public static Properties readProperties(File file) throws IOException {
-		Properties properties = new Properties();
-		FileInputStream fis = new FileInputStream(file);
-		properties.load(fis);
-		return properties;
-	}
-	
+
+    public static Properties readProperties(File file) throws IOException {
+
+	Properties properties = new Properties();
+	properties.load(new FileInputStream(file));
+	return properties;
+    }
 
 }

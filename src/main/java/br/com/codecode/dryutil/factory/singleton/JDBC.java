@@ -15,151 +15,149 @@ import javax.sql.DataSource;
 import br.com.codecode.dryutil.LoadProperties;
 import br.com.codecode.dryutil.factory.exception.ConnectionException;
 
-
-
 public final class JDBC {
 
-	private static JDBC instance;
-	
-	private static Connection connection;
+    private static Connection connection;
 
-	private Properties properties;	
+    private static JDBC instance;
 
-	private Context ctx = null;
+    private Context ctx = null;
 
-	private DataSource ds = null;
+    private String dbHost;
 
-	private String url = "jdbc:mysql://%s:%s/%s";
-	private String dbHost ;
-	private String dbPort ;
-	private String dbName ;	
-	private String dbLogin ;
-	private String dbPassword ;
-	private String jndiName ;
+    private String dbLogin;
 
-	private void doLoadProperties(){
+    private String dbName;
 
-		try {
+    private String dbPassword;
 
-			properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
+    private String dbPort;
 
-			dbHost = properties.getProperty("dbHost");
+    private DataSource ds = null;
 
-			dbPort = properties.getProperty("dbPort");
+    private String jndiName;
 
-			dbName = properties.getProperty("dbName") ;
+    private Properties properties;
 
-			dbLogin = properties.getProperty("dbLogin");
+    private String url = "jdbc:mysql://%s:%s/%s";
 
-			dbPassword = properties.getProperty("dbPassword") ;
+    private JDBC() {
 
-			jndiName = properties.getProperty("jndiName");
+	doLoadProperties();
 
+	try {
 
-		} catch (IOException e) {
+	    doLoadJNDIConnection();
 
-			throw new RuntimeException("File properties Not Found ", e);
-		}
+	    System.out.println("Connected with JNDI !");
+
+	} catch (ConnectionException e) {
+
+	    System.err.println("Failed to load JNDI, trying to load Driver Manager \n " + e);
+
+	    try {
+
+		doLoadDriverManager();
+
+		System.out.println("Connected with Driver Manager !");
+
+	    } catch (ConnectionException ex) {
+
+		throw new RuntimeException("Failed to load Driver Manager \n" + ex);
+	    }
+
+	}
+    }
+
+    public static synchronized JDBC getInstance() throws ConnectionException {
+
+	if (instance == null) {
+	    instance = new JDBC();
+	}
+	return instance;
+
+    }
+
+    public void doCloseConnection() {
+
+	try {
+	    if (!connection.isClosed()) {
+		connection.close();
+		System.out.println("Connection was closed");
+	    } else {
+		System.out.println("Connection already closed");
+	    }
+	} catch (SQLException ex) {
+	    System.err.println(ex);
+	}
+    }
+
+    private void doLoadDriverManager() throws ConnectionException {
+
+	System.out.println("[doLoadDriverManager]");
+
+	url = String.format(url, dbHost, dbPort, dbName);
+
+	try {
+
+	    connection = (Connection) DriverManager.getConnection(url, dbLogin, dbPassword);
+
+	} catch (SQLException ex) {
+
+	    throw new ConnectionException(
+		    "Could not load Driver Manager, check the properties of the connection. : " + ex);
+	}
+
+    }
+
+    private void doLoadJNDIConnection() throws ConnectionException {
+
+	System.out.println("[doLoadJNDIConnection]");
+
+	try {
+	    ctx = new InitialContext();
+
+	    ds = (DataSource) ctx.lookup(jndiName);
+
+	    connection = ds.getConnection();
+
+	} catch (NamingException | SQLException ex) {
+
+	    throw new ConnectionException(
+		    "Could not load Driver Manager, check the properties of the connection. :" + ex);
 
 	}
 
-	private JDBC() {
+    }
 
-		doLoadProperties();
+    private void doLoadProperties() {
 
-		try {
+	try {
 
-			doLoadJNDIConnection();
+	    properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
 
-			System.out.println("Connected with JNDI !");			
+	    dbHost = properties.getProperty("dbHost");
 
-		} catch (ConnectionException e) {
+	    dbPort = properties.getProperty("dbPort");
 
-			System.err.println("Failed to load JNDI, trying to load Driver Manager \n " + e);
+	    dbName = properties.getProperty("dbName");
 
-			try {
+	    dbLogin = properties.getProperty("dbLogin");
 
-				doLoadDriverManager();
+	    dbPassword = properties.getProperty("dbPassword");
 
-				System.out.println("Connected with Driver Manager !");
+	    jndiName = properties.getProperty("jndiName");
 
-			} catch (ConnectionException ex) {
+	} catch (IOException e) {
 
-				throw new RuntimeException("Failed to load Driver Manager \n" + ex);
-			}			
-
-		} 		
+	    throw new RuntimeException("File properties Not Found ", e);
 	}
 
-	/**
-	 *
-	 * @return MysqlConnect Database connection object
-	 * @throws ConnectionException.dao.exception.ConnectException
-	 *
-	 */
-	public static synchronized JDBC getInstance() throws ConnectionException {
-		if (instance == null) {
-			instance = new JDBC();
-		}
-		return instance;
+    }
 
-	}
+    public Connection getConnection() {
 
-	public Connection getConnection() {
-
-		return connection;
-	}
-
-	public void doCloseConnection() {
-		try {
-			if (!connection.isClosed()) {
-				connection.close();
-				System.out.println("Connection was closed");
-			} else {
-				System.out.println("Connection already closed");
-			}
-		} catch (SQLException ex) {
-			System.err.println(ex);
-		}
-	}
-
-	private void doLoadDriverManager() throws ConnectionException {
-
-		System.out.println("[doLoadDriverManager]");
-
-		url = String.format(url, dbHost, dbPort, dbName);
-
-
-		try {			
-
-			connection = (Connection) DriverManager.getConnection(url, dbLogin, dbPassword);		
-
-
-		} catch (SQLException ex) {
-
-			throw new ConnectionException("Could not load Driver Manager, check the properties of the connection. : " + ex);
-		}
-
-
-	}
-
-	private void doLoadJNDIConnection() throws ConnectionException {
-		
-		System.out.println("[doLoadJNDIConnection]");
-
-		try {
-			ctx = new InitialContext();
-
-			ds = (DataSource) ctx.lookup(jndiName);
-
-			connection = ds.getConnection();
-
-		} catch (NamingException | SQLException ex) {
-
-			throw new ConnectionException("Could not load Driver Manager, check the properties of the connection. :" + ex);
-
-		}	
-
-	}
+	return connection;
+    }
 
 }

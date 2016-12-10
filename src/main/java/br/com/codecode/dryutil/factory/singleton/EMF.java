@@ -12,52 +12,50 @@ import br.com.codecode.dryutil.LoadProperties;
 
 public final class EMF {
 
-	private static EMF instance;
+    private static EMF instance;
 
-	private EntityManager entityManager;
+    private static String persistenceUnity;
 
-	private static String persistenceUnity;
+    private EntityManager entityManager;
 
-	private Properties properties;
+    private Properties properties;
 
-	public static synchronized EMF getInstance() {
+    private EMF() {
 
-		if (instance == null) {
+	try {
 
-			instance = new EMF();
+	    properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
 
-		}
+	    persistenceUnity = properties.getProperty("persistenceUnity");
 
-		return instance;
+	} catch (IOException e) {
+
+	    throw new RuntimeException("File properties Not Found ", e);
 	}
 
-	private EMF() {
-		
-		try {
-			
-			properties = LoadProperties.readProperties(new File("./src/resources/META-INF/properties.properties"));
+	entityManager = getEntityManager();
+    }
 
-			persistenceUnity = properties.getProperty("persistenceUnity");
+    public static synchronized EMF getInstance() {
 
+	if (instance == null) {
 
-		} catch (IOException e) {
+	    instance = new EMF();
 
-			throw new RuntimeException("File properties Not Found ", e);
-		}
-
-		entityManager = getEntityManager();
 	}
 
+	return instance;
+    }
 
-	public EntityManager getEntityManager() {
+    public EntityManager getEntityManager() {
 
-		EntityManagerFactory factory = Persistence.createEntityManagerFactory(persistenceUnity);
+	EntityManagerFactory factory = Persistence.createEntityManagerFactory(persistenceUnity);
 
-		if (entityManager == null) {
+	if (entityManager == null) {
 
-			entityManager = factory.createEntityManager();
-		}
-
-		return entityManager;
+	    entityManager = factory.createEntityManager();
 	}
+
+	return entityManager;
+    }
 }
